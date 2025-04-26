@@ -81,6 +81,15 @@ Todos os eventos importantes da aplicação são registrados em `app.log`, inclu
 
 Os logs ajudam na depuração e análise de problemas futuros.
 
+## 📸 Demonstração
+
+### Tela de Menu
+![Tela Menu](images/terminal_menu.png)
+
+### Exemplo de Listagem de Produtos
+![Listagem Produtos](images/terminal_listagem.png)
+
+
 ## 💡 Melhorias Implementadas
 
 - Tratamento completo de exceções.
