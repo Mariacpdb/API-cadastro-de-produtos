@@ -1,0 +1,10 @@
+# Ignorar a pasta de cache do Python
+__pycache__/
+*.pyc
+
+# Ignorar o banco de dados (se preferir manter local)
+# produtos.db
+
+# Ignorar arquivos temporários do sistema
+*.DS_Store
+*.vscode/

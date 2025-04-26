@@ -1,8 +1,9 @@
 import sqlite3
 import datetime
 import time
+import logging
 
-# Função para conectar ao banco de dados e criar a tabela se não existir
+# Conectar ao banco e criar tabela se nao existir
 def conectar_banco():
     conn = sqlite3.connect('produtos.db')
     cursor = conn.cursor()
@@ -21,7 +22,14 @@ def conectar_banco():
 
 conn, cursor = conectar_banco()
 
-# Função para validar se a data está correta
+# Configurar log
+logging.basicConfig(
+    filename='app.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Validar data
 def validar_data(data):
     if data == '':
         return True
@@ -45,7 +53,7 @@ def validar_data(data):
         print("Data inválida! Certifique-se de usar o formato AAAA-MM-DD com valores corretos.")
         return False
 
-# Função para validar o preço digitado
+# Validar preco
 def validar_preco(preco):
     try:
         preco = float(preco)
@@ -55,14 +63,15 @@ def validar_preco(preco):
     except ValueError:
         return None
 
-# Função para validar o ID digitado
+# Validar id
 def validar_id(id_input):
     if not id_input.isdigit() or int(id_input) <= 0:
+        logging.warning("Tentativa de usar ID inválido.")
         print("ID inválido! Digite apenas números inteiros positivos.")
         return None
     return int(id_input)
 
-# Função para listar todos os produtos ativos
+# Listar produtos
 def listar_produtos():
     cursor.execute("SELECT * FROM produto WHERE status = 'ativo'")
     produtos = cursor.fetchall()
@@ -76,7 +85,7 @@ def listar_produtos():
         print("Nenhum produto encontrado.")
     time.sleep(2)
 
-# Função para buscar um produto específico pelo ID
+# Buscar produto
 def buscar_produto():
     id_busca = input("Digite o ID do produto que deseja buscar: ").strip()
     id_valido = validar_id(id_busca)
@@ -91,7 +100,7 @@ def buscar_produto():
         print("Produto não encontrado.")
     time.sleep(2)
 
-# Função para adicionar um novo produto
+# Adicionar produto
 def adicionar_produto():
     print("\n--- Cadastro de Produto ---")
     nome = input("Nome do produto: ").strip()
@@ -127,10 +136,11 @@ def adicionar_produto():
         (nome, preco, data_validade if data_validade else None, descricao if descricao else None)
     )
     conn.commit()
+    logging.info(f"Produto cadastrado: {nome}")
     print("✅ Produto cadastrado com sucesso!")
     time.sleep(2)
 
-# Função para atualizar os dados de um produto existente
+# Atualizar produto
 def atualizar_produto():
     print("\n--- Atualizar Produto ---")
     id_update = input("ID do produto a atualizar: ").strip()
@@ -150,16 +160,6 @@ def atualizar_produto():
         print("Nome é obrigatório!")
         nome = input("Novo nome do produto: ").strip()
 
-    cursor.execute("SELECT * FROM produto WHERE nome = ? AND status = 'ativo' AND id != ?", (nome, id_valido))
-    produto_existente = cursor.fetchone()
-    if produto_existente:
-        print("\nJá existe outro produto ativo com esse nome.")
-        confirmar = input("Deseja continuar mesmo assim? (s/n): ").strip().lower()
-        if confirmar != 's':
-            print("Atualização cancelada.")
-            time.sleep(2)
-            return
-
     preco = None
     while preco is None:
         preco_input = input("Novo preço do produto: ").strip()
@@ -178,10 +178,11 @@ def atualizar_produto():
         (nome, preco, data_validade if data_validade else None, descricao if descricao else None, id_valido)
     )
     conn.commit()
+    logging.info(f"Produto atualizado: ID {id_valido}")
     print("✅ Produto atualizado com sucesso!")
     time.sleep(2)
 
-# Função para deletar um produto (soft delete)
+# Deletar produto (soft delete)
 def deletar_produto():
     id_delete = input("Digite o ID do produto que deseja deletar: ").strip()
     id_valido = validar_id(id_delete)
@@ -198,6 +199,7 @@ def deletar_produto():
         if confirmacao == 's':
             cursor.execute("UPDATE produto SET status = 'inativo' WHERE id = ?", (id_valido,))
             conn.commit()
+            logging.info(f"Produto marcado como inativo: ID {id_valido}")
             print("✅ Produto marcado como inativo!")
         else:
             print("Operação cancelada.")
@@ -205,7 +207,7 @@ def deletar_produto():
         print("Produto não encontrado.")
     time.sleep(2)
 
-# Função principal para exibir o menu de opções
+# Menu
 def menu():
     while True:
         print("\n--- MENU CRUD PRODUTOS ---")
