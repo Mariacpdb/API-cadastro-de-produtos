@@ -10,5 +10,7 @@ COPY . .
 # Instala dependências (nesse projeto não tem dependência extra)
 # Então não precisa instalar nada além do próprio Python
 
+ENV PYTHONUNBUFFERED=1
+
 # Comando para rodar a aplicação automaticamente
 CMD ["python", "app.py"]
