@@ -43,7 +43,7 @@ ProjetoCRUD/
 ### 1. Executar Localmente
 
 ```bash
-git clone https://github.com/Mariacpdb/API-cadastro-de-produtos.git
+git clone https://github.com/Mariacpdb/cadastro-de-produtos.git
 python app.py
 ```
 
